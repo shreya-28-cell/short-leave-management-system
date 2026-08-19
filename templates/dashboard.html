@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Dashboard</h1>
+
+<p>Welcome, {{ user.username }}.</p>
+
+{% if user.is_staff %}
+    <p>You are logged in as an <strong>Admin</strong>.</p>
+    <p>You will approve or reject employee short-leave requests.</p>
+{% else %}
+    <p>You are logged in as an <strong>Employee</strong>.</p>
+    <p>You will apply for and track your short-leave requests.</p>
+{% endif %}
+{% endblock %}

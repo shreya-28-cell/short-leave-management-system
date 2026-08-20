@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>My Short Leave Requests</h1>
+
+<p><a href="{% url 'apply_short_leave' %}">+ Apply for Short Leave</a></p>
+
+<div class="card">
+    {% if leaves %}
+        {% for leave in leaves %}
+            <hr>
+            <p><strong>Date:</strong> {{ leave.leave_date }}</p>
+            <p><strong>Time:</strong> {{ leave.start_time }} to {{ leave.end_time }}</p>
+            <p><strong>Duration:</strong> {{ leave.duration_hours }}</p>
+            <p><strong>Reason:</strong> {{ leave.reason }}</p>
+            <p><strong>Status:</strong> {{ leave.get_status_display }}</p>
+        {% endfor %}
+    {% else %}
+        <p>You have not submitted any short leave requests yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

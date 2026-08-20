@@ -1,24 +1,35 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 
 {% block content %}
 <div class="card">
-    <h1>Login</h1>
-    <p>Employee and Admin Login</p>
+    <h1>Welcome Back</h1>
+    <p>Login to your Short Leave Management account.</p>
 
     {% if form.errors %}
-        <p class="error">Incorrect username or password.</p>
+        <p class="error">
+            Incorrect username or password. Please try again.
+        </p>
     {% endif %}
 
     <form method="post">
         {% csrf_token %}
 
-        <label>Username</label>
-        {{ form.username }}
+        <p>
+            <label for="id_username">Username</label>
+            {{ form.username }}
+        </p>
 
-        <label>Password</label>
-        {{ form.password }}
+        <p>
+            <label for="id_password">Password</label>
+            {{ form.password }}
+        </p>
 
         <button type="submit">Login</button>
     </form>
+
+    <p>
+        New employee?
+        <a href="{% url 'register' %}">Create an account</a>
+    </p>
 </div>
 {% endblock %}

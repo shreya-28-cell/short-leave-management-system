@@ -10,7 +10,32 @@ class EmployeeRegistrationForm(UserCreationForm):
     last_name = forms.CharField(max_length=30, required=True)
     email = forms.EmailField(required=True)
     employee_id = forms.CharField(max_length=20)
-    department = forms.CharField(max_length=100)
+
+    DEPARTMENT_CHOICES = [
+    
+    ("", "Select Department"),
+    ("CSE", "Computer Science and Engineering"),
+    ("IT", "Information Technology"),
+    ("ECE", "Electronics and Communication Engineering"),
+    ("EEE", "Electrical and Electronics Engineering"),
+    ("MECH", "Mechanical Engineering"),
+    ("CIVIL", "Civil Engineering"),
+    ("AI_DS", "Artificial Intelligence and Data Science"),
+    ("AI_ML", "Artificial Intelligence and Machine Learning"),
+    ("BCA", "Bachelor of Computer Applications"),
+    ("MCA", "Master of Computer Applications"),
+    ("BBA", "Bachelor of Business Administration"),
+    ("MBA", "Master of Business Administration"),
+    ("B.COM", "Bachelor of Commerce"),
+    ("OTHER", "Other"),
+ 
+    ]
+
+    department = forms.ChoiceField(
+        choices=DEPARTMENT_CHOICES,
+        required=True
+    )
+
     designation = forms.CharField(max_length=100)
 
     class Meta:

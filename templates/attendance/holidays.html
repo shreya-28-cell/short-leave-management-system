@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Holidays{% endblock %}
+{% block page_title %}Calendar &amp; Holidays{% endblock %}
+
+{% block content %}
+{% if user.is_admin_role %}
+<div class="form-card" style="margin-bottom: 24px;">
+    <form method="POST">
+        {% csrf_token %}
+        <label class="field">
+            <span class="field-label">Date</span>
+            <input type="date" name="date" required>
+        </label>
+        <label class="field">
+            <span class="field-label">Holiday name</span>
+            <input type="text" name="name" required placeholder="e.g. Diwali">
+        </label>
+        <button type="submit" class="btn btn--primary">Add holiday</button>
+    </form>
+</div>
+{% endif %}
+
+<div class="ledger">
+    <table class="data-table">
+        <thead>
+            <tr><th>Date</th><th>Holiday</th></tr>
+        </thead>
+        <tbody>
+            {% for h in holidays %}
+            <tr><td>{{ h.date }}</td><td>{{ h.name }}</td></tr>
+            {% empty %}
+            <tr><td colspan="2" class="empty-row">No holidays added yet.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Add Employee{% endblock %}
+{% block page_title %}Add Employee{% endblock %}
+
+{% block content %}
+<div class="form-card">
+    <form method="POST">
+        {% csrf_token %}
+        {% for field in form %}
+            <label class="field">
+                <span class="field-label">{{ field.label }}</span>
+                {{ field }}
+                {% if field.help_text %}<span class="field-hint">{{ field.help_text }}</span>{% endif %}
+                {% if field.errors %}<span class="field-error">{{ field.errors|striptags }}</span>{% endif %}
+            </label>
+        {% endfor %}
+        <button type="submit" class="btn btn--primary">Add employee</button>
+    </form>
+</div>
+{% endblock %}

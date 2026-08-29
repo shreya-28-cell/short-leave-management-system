@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Employees{% endblock %}
+{% block page_title %}Employees{% endblock %}
+
+{% block content %}
+<div class="content-toolbar">
+    <p class="content-lede">{{ employees|length }} employee{{ employees|length|pluralize }} on record.</p>
+    <a href="{% url 'employees:add' %}" class="btn btn--primary">Add employee</a>
+</div>
+
+<div class="ledger">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Code</th>
+                <th>Department</th>
+                <th>Designation</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for emp in employees %}
+            <tr>
+                <td>{{ emp.full_name }}</td>
+                <td>{{ emp.email }}</td>
+                <td>{{ emp.employee_code|default:"—" }}</td>
+                <td>{{ emp.department|default:"—" }}</td>
+                <td>{{ emp.designation|default:"—" }}</td>
+                <td>
+                    {% if emp.is_active_employee %}
+                        <span class="badge badge--active">Active</span>
+                    {% else %}
+                        <span class="badge badge--inactive">Inactive</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="6" class="empty-row">No employees yet — add your first one.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

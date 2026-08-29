@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Attendance{% endblock %}
+{% block page_title %}Attendance{% endblock %}
+
+{% block content %}
+<p class="content-lede">Most recent 200 records across all employees.</p>
+
+<div class="ledger">
+    <table class="data-table">
+        <thead>
+            <tr><th>Employee</th><th>Date</th><th>In</th><th>Out</th><th>Hours</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+            {% for r in records %}
+            <tr>
+                <td>{{ r.employee.full_name }}</td>
+                <td>{{ r.date }}</td>
+                <td>{{ r.in_time|default:"—" }}</td>
+                <td>{{ r.out_time|default:"—" }}</td>
+                <td>{{ r.working_hours }}</td>
+                <td>{{ r.status }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="6" class="empty-row">No attendance records yet.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

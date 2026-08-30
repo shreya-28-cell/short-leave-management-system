@@ -18,6 +18,7 @@
                 <th>Department</th>
                 <th>Designation</th>
                 <th>Status</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -35,9 +36,23 @@
                         <span class="badge badge--inactive">Inactive</span>
                     {% endif %}
                 </td>
+                <td style="white-space: nowrap;">
+                    <form method="POST" action="{% url 'employees:toggle_active' emp.pk %}" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn--ghost btn--sm">
+                            {% if emp.is_active_employee %}Deactivate{% else %}Activate{% endif %}
+                        </button>
+                    </form>
+                    <form method="POST" action="{% url 'employees:delete' emp.pk %}"
+                          onsubmit="return confirm('Permanently delete {{ emp.full_name }}? This also deletes their leave, attendance, and notification history. This cannot be undone.');"
+                          style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn--ghost btn--sm" style="color:#B0492F; border-color:#EBC0B3;">Delete</button>
+                    </form>
+                </td>
             </tr>
             {% empty %}
-            <tr><td colspan="6" class="empty-row">No employees yet — add your first one.</td></tr>
+            <tr><td colspan="7" class="empty-row">No employees yet — add your first one.</td></tr>
             {% endfor %}
         </tbody>
     </table>

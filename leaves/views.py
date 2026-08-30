@@ -5,8 +5,10 @@ from django.contrib import messages
 from django.utils import timezone
 from django.db.models import Case, When, Value, IntegerField
 
+from accounts.models import User
 from .models import LeaveRequest, LeaveBalance
 from .forms import LeaveApplicationForm
+from notifications.utils import notify
 
 
 def is_admin(user):
@@ -16,8 +18,6 @@ def is_admin(user):
 def is_employee(user):
     return user.is_authenticated and user.is_employee_role()
 
-
-# ---------- Employee views ----------
 
 @login_required
 @user_passes_test(is_employee, login_url="accounts:login")
@@ -30,6 +30,15 @@ def apply_leave(request):
             leave.total_days = (leave.to_date - leave.from_date).days + 1
             leave.save()
             LeaveBalance.objects.get_or_create(user=request.user)
+
+            for admin_user in User.objects.filter(role="admin"):
+                notify(
+                    admin_user,
+                    "New leave request",
+                    f"{request.user.full_name} applied for {leave.leave_type} "
+                    f"({leave.from_date} to {leave.to_date}, {leave.total_days} day(s)).",
+                )
+
             messages.success(request, "Leave request submitted.")
             return redirect("leaves:my_leaves")
     else:
@@ -44,8 +53,6 @@ def my_leaves(request):
     leave_requests = request.user.leave_requests.all()
     return render(request, "leaves/my_leaves.html", {"leave_requests": leave_requests, "balance": balance})
 
-
-# ---------- Admin views ----------
 
 @login_required
 @user_passes_test(is_admin, login_url="accounts:login")
@@ -109,6 +116,12 @@ def approve_leave(request, pk):
     leave.approved_at = timezone.now()
     leave.save()
 
+    notify(
+        leave.employee,
+        "Leave approved",
+        f"Your {leave.leave_type} request ({leave.from_date} to {leave.to_date}) was approved.",
+    )
+
     messages.success(request, "Leave approved.")
     return redirect("leaves:admin_list")
 
@@ -128,6 +141,13 @@ def reject_leave(request, pk):
     leave.approved_at = timezone.now()
     leave.manager_remark = request.POST.get("remark", "")
     leave.save()
+
+    remark_note = f" Remark: {leave.manager_remark}" if leave.manager_remark else ""
+    notify(
+        leave.employee,
+        "Leave rejected",
+        f"Your {leave.leave_type} request ({leave.from_date} to {leave.to_date}) was rejected.{remark_note}",
+    )
 
     messages.info(request, "Leave rejected.")
     return redirect("leaves:admin_list")

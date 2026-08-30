@@ -71,12 +71,17 @@
                 <span class="nav-label">Calendar &amp; Holidays</span>
             </a>
 
-            <span class="nav-item nav-item--locked">
-                <span class="nav-dot"></span><span class="nav-label">Notifications</span><span class="nav-lock">Phase 5</span>
-            </span>
-            <span class="nav-item nav-item--locked">
-                <span class="nav-dot"></span><span class="nav-label">Reports</span><span class="nav-lock">Phase 6</span>
-            </span>
+            <a class="nav-item" href="{% url 'notifications:list' %}">
+                <span class="nav-dot nav-dot--live"></span>
+                <span class="nav-label">Notifications</span>
+            </a>
+
+            {% if user.is_admin_role %}
+            <a class="nav-item" href="{% url 'reports:leave_reports' %}">
+                <span class="nav-dot nav-dot--live"></span>
+                <span class="nav-label">Reports</span>
+            </a>
+            {% endif %}
         </nav>
 
         <div class="sidebar-foot">
@@ -88,11 +93,20 @@
         <header class="topbar">
             <h1 class="page-title">{% block page_title %}Dashboard{% endblock %}</h1>
             <div class="topbar-user">
+                <a href="{% url 'notifications:list' %}" class="bell-link">
+                    🔔
+                    {% if unread_notifications_count > 0 %}
+                        <span class="bell-badge">{{ unread_notifications_count }}</span>
+                    {% endif %}
+                </a>
                 <div class="user-meta">
                     <span class="user-name">{{ user.full_name }}</span>
                     <span class="user-email">{{ user.email }}</span>
                 </div>
-                <a href="{% url 'accounts:logout' %}" class="btn btn--ghost">Log out</a>
+                <form method="POST" action="{% url 'accounts:logout' %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn--ghost">Log out</button>
+                </form>
             </div>
         </header>
 

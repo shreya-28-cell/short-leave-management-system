@@ -9,5 +9,7 @@ urlpatterns = [
     path("employees/", include("employees.urls")),
     path("leaves/", include("leaves.urls")),
     path("attendance/", include("attendance.urls")),
+    path("notifications/", include("notifications.urls")),
+ path("reports/", include("reports.urls")),
     path("", RedirectView.as_view(pattern_name="accounts:login")),
 ]

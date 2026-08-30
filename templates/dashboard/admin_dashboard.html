@@ -30,8 +30,12 @@
         <li class="ledger-item ledger-item--done"><span class="ledger-check">✓</span> Phase 2 — Employee management</li>
         <li class="ledger-item ledger-item--done"><span class="ledger-check">✓</span> Phase 3 — Leave application &amp; balance</li>
         <li class="ledger-item ledger-item--done"><span class="ledger-check">✓</span> Phase 4 — Attendance &amp; calendar</li>
-        <li class="ledger-item"><span class="ledger-check"></span> Phase 5 — Notifications &amp; statistics</li>
-        <li class="ledger-item"><span class="ledger-check"></span> Phase 6 — Reports &amp; search</li>
+        <li class="ledger-item ledger-item--done"><span class="ledger-check">✓</span> Phase 5 — Notifications &amp; statistics</li>
+        <li class="ledger-item ledger-item--done"><span class="ledger-check">✓</span> Phase 6 — Reports &amp; search</li>
     </ul>
 </div>
+
+<p class="content-lede" style="margin-top: 16px;">
+    <a href="{% url 'reports:leave_reports' %}" class="btn btn--primary">Open Reports</a>
+</p>
 {% endblock %}

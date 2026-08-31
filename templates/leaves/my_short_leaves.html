@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}My Short Leaves{% endblock %}
+{% block page_title %}My Short Leaves{% endblock %}
+
+{% block content %}
+<div class="content-toolbar">
+    <p class="content-lede">{{ remaining }} short leave{{ remaining|pluralize }} remaining this month.</p>
+    <a href="{% url 'leaves:apply_short_leave' %}" class="btn btn--primary">Apply for short leave</a>
+</div>
+
+<div class="ledger">
+    <table class="data-table">
+        <thead>
+            <tr><th>Date</th><th>From</th><th>To</th><th>Status</th><th>Remark</th></tr>
+        </thead>
+        <tbody>
+            {% for sl in short_leaves %}
+            <tr>
+                <td>{{ sl.date }}</td>
+                <td>{{ sl.from_time }}</td>
+                <td>{{ sl.to_time }}</td>
+                <td>
+                    {% if sl.status == "Approved" %}
+                        <span class="badge badge--active">Approved</span>
+                    {% elif sl.status == "Rejected" %}
+                        <span class="badge badge--inactive">Rejected</span>
+                    {% else %}
+                        <span class="badge badge--pending">Pending</span>
+                    {% endif %}
+                </td>
+                <td>{{ sl.manager_remark|default:"—" }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="5" class="empty-row">No short leave requests yet.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

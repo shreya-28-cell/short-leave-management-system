@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Short Leave Requests{% endblock %}
+{% block page_title %}Short Leave Requests{% endblock %}
+
+{% block content %}
+<p class="content-lede">{{ short_leaves|length }} request{{ short_leaves|length|pluralize }} total. Pending requests are shown first.</p>
+
+<div class="ledger">
+    <table class="data-table">
+        <thead>
+            <tr><th>Employee</th><th>Date</th><th>From</th><th>To</th><th>Status</th><th>Actions</th></tr>
+        </thead>
+        <tbody>
+            {% for sl in short_leaves %}
+            <tr>
+                <td>{{ sl.employee.full_name }}</td>
+                <td>{{ sl.date }}</td>
+                <td>{{ sl.from_time }}</td>
+                <td>{{ sl.to_time }}</td>
+                <td>
+                    {% if sl.status == "Approved" %}
+                        <span class="badge badge--active">Approved</span>
+                    {% elif sl.status == "Rejected" %}
+                        <span class="badge badge--inactive">Rejected</span>
+                    {% else %}
+                        <span class="badge badge--pending">Pending</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if sl.status == "Pending" %}
+                        <form method="POST" action="{% url 'leaves:approve_short_leave' sl.pk %}" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn--primary btn--sm">Approve</button>
+                        </form>
+                        <form method="POST" action="{% url 'leaves:reject_short_leave' sl.pk %}" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn--ghost btn--sm">Reject</button>
+                        </form>
+                    {% else %}
+                        <span class="stat-note">—</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="6" class="empty-row">No short leave requests yet.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

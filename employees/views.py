@@ -37,7 +37,7 @@ def employee_add(request):
 def employee_toggle_active(request, pk):
     employee = get_object_or_404(User, pk=pk, role="employee")
     employee.is_active_employee = not employee.is_active_employee
-    employee.is_active = employee.is_active_employee  # this actually blocks/allows login
+    employee.is_active = employee.is_active_employee
     employee.save()
     state = "activated" if employee.is_active_employee else "deactivated"
     messages.success(request, f"{employee.full_name} was {state}.")

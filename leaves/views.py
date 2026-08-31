@@ -6,9 +6,11 @@ from django.utils import timezone
 from django.db.models import Case, When, Value, IntegerField
 
 from accounts.models import User
-from .models import LeaveRequest, LeaveBalance
-from .forms import LeaveApplicationForm
+from .models import LeaveRequest, LeaveBalance, ShortLeaveRequest
+from .forms import LeaveApplicationForm, ShortLeaveApplicationForm
 from notifications.utils import notify
+
+MAX_SHORT_LEAVES_PER_MONTH = 2
 
 
 def is_admin(user):
@@ -151,3 +153,119 @@ def reject_leave(request, pk):
 
     messages.info(request, "Leave rejected.")
     return redirect("leaves:admin_list")
+
+
+@login_required
+@user_passes_test(is_employee, login_url="accounts:login")
+def apply_short_leave(request):
+    today = timezone.localdate()
+    used_this_month = ShortLeaveRequest.objects.filter(
+        employee=request.user,
+        date__year=today.year,
+        date__month=today.month,
+    ).exclude(status="Rejected").count()
+
+    if request.method == "POST":
+        if used_this_month >= MAX_SHORT_LEAVES_PER_MONTH:
+            messages.error(request, f"You've used your {MAX_SHORT_LEAVES_PER_MONTH} short leaves for this month.")
+            return redirect("leaves:my_short_leaves")
+
+        form = ShortLeaveApplicationForm(request.POST)
+        if form.is_valid():
+            short_leave = form.save(commit=False)
+            short_leave.employee = request.user
+            short_leave.save()
+
+            for admin_user in User.objects.filter(role="admin"):
+                notify(
+                    admin_user,
+                    "New short leave request",
+                    f"{request.user.full_name} requested short leave on {short_leave.date} "
+                    f"({short_leave.from_time.strftime('%I:%M %p')} to {short_leave.to_time.strftime('%I:%M %p')}).",
+                )
+
+            messages.success(request, "Short leave request submitted.")
+            return redirect("leaves:my_short_leaves")
+    else:
+        form = ShortLeaveApplicationForm()
+
+    remaining = max(MAX_SHORT_LEAVES_PER_MONTH - used_this_month, 0)
+    return render(request, "leaves/apply_short_leave.html", {"form": form, "remaining": remaining})
+
+
+@login_required
+@user_passes_test(is_employee, login_url="accounts:login")
+def my_short_leaves(request):
+    today = timezone.localdate()
+    used_this_month = ShortLeaveRequest.objects.filter(
+        employee=request.user,
+        date__year=today.year,
+        date__month=today.month,
+    ).exclude(status="Rejected").count()
+    remaining = max(MAX_SHORT_LEAVES_PER_MONTH - used_this_month, 0)
+    short_leaves = request.user.short_leave_requests.all()
+    return render(request, "leaves/my_short_leaves.html", {
+        "short_leaves": short_leaves,
+        "remaining": remaining,
+    })
+
+
+@login_required
+@user_passes_test(is_admin, login_url="accounts:login")
+def short_leave_requests_admin(request):
+    short_leaves = (
+        ShortLeaveRequest.objects.select_related("employee")
+        .annotate(
+            priority=Case(
+                When(status="Pending", then=Value(0)),
+                default=Value(1),
+                output_field=IntegerField(),
+            )
+        )
+        .order_by("priority", "-applied_at")
+    )
+    return render(request, "leaves/short_leave_admin_list.html", {"short_leaves": short_leaves})
+
+
+@login_required
+@user_passes_test(is_admin, login_url="accounts:login")
+@require_POST
+def approve_short_leave(request, pk):
+    sl = get_object_or_404(ShortLeaveRequest, pk=pk)
+    if sl.status != "Pending":
+        messages.warning(request, "This request has already been processed.")
+        return redirect("leaves:short_leave_admin_list")
+
+    sl.status = "Approved"
+    sl.approved_by = request.user
+    sl.approved_at = timezone.now()
+    sl.save()
+
+    notify(
+        sl.employee,
+        "Short leave approved",
+        f"Your short leave on {sl.date} ({sl.from_time.strftime('%I:%M %p')}–{sl.to_time.strftime('%I:%M %p')}) was approved.",
+    )
+    messages.success(request, "Short leave approved.")
+    return redirect("leaves:short_leave_admin_list")
+
+
+@login_required
+@user_passes_test(is_admin, login_url="accounts:login")
+@require_POST
+def reject_short_leave(request, pk):
+    sl = get_object_or_404(ShortLeaveRequest, pk=pk)
+    if sl.status != "Pending":
+        messages.warning(request, "This request has already been processed.")
+        return redirect("leaves:short_leave_admin_list")
+
+    sl.status = "Rejected"
+    sl.approved_by = request.user
+    sl.approved_at = timezone.now()
+    sl.manager_remark = request.POST.get("remark", "")
+    sl.save()
+
+    remark_note = f" Remark: {sl.manager_remark}" if sl.manager_remark else ""
+    notify(sl.employee, "Short leave rejected", f"Your short leave on {sl.date} was rejected.{remark_note}")
+    messages.info(request, "Short leave rejected.")
+    return redirect("leaves:short_leave_admin_list")

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Apply Short Leave{% endblock %}
+{% block page_title %}Apply for Short Leave{% endblock %}
+
+{% block content %}
+<div class="form-card">
+    <p class="content-lede" style="margin-bottom: 16px;">
+        You have {{ remaining }} short leave{{ remaining|pluralize }} left this month.
+    </p>
+    <form method="POST">
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+            <div class="alert alert--error">{{ form.non_field_errors|striptags }}</div>
+        {% endif %}
+        {% for field in form %}
+            <label class="field">
+                <span class="field-label">{{ field.label }}</span>
+                {{ field }}
+                {% if field.errors %}<span class="field-error">{{ field.errors|striptags }}</span>{% endif %}
+            </label>
+        {% endfor %}
+        <button type="submit" class="btn btn--primary" {% if remaining == 0 %}disabled{% endif %}>Submit request</button>
+    </form>
+</div>
+{% endblock %}

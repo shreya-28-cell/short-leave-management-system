@@ -3,7 +3,7 @@
 {% block page_title %}Admin Dashboard{% endblock %}
 
 {% block content %}
-<p class="content-lede">Welcome back, {{ user.full_name }}. Here's the state of the build.</p>
+<p class="content-lede">Welcome back, {{ user.full_name }}.</p>
 
 <div class="stat-grid">
     <div class="stat-card">
@@ -21,18 +21,6 @@
         <span class="stat-value">{{ present_today_count }}</span>
         <span class="stat-note"><a href="{% url 'attendance:admin_list' %}">View attendance</a></span>
     </div>
-</div>
-
-<div class="ledger">
-    <h3 class="ledger-title">Build ledger</h3>
-    <ul class="ledger-list">
-        <li class="ledger-item ledger-item--done"><span class="ledger-check">✓</span> Phase 1 — Authentication &amp; role-based access</li>
-        <li class="ledger-item ledger-item--done"><span class="ledger-check">✓</span> Phase 2 — Employee management</li>
-        <li class="ledger-item ledger-item--done"><span class="ledger-check">✓</span> Phase 3 — Leave application &amp; balance</li>
-        <li class="ledger-item ledger-item--done"><span class="ledger-check">✓</span> Phase 4 — Attendance &amp; calendar</li>
-        <li class="ledger-item ledger-item--done"><span class="ledger-check">✓</span> Phase 5 — Notifications &amp; statistics</li>
-        <li class="ledger-item ledger-item--done"><span class="ledger-check">✓</span> Phase 6 — Reports &amp; search</li>
-    </ul>
 </div>
 
 <p class="content-lede" style="margin-top: 16px;">

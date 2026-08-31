@@ -61,3 +61,39 @@ class LeaveRequest(models.Model):
 
     def __str__(self):
         return f"{self.employee.full_name} — {self.leave_type} ({self.status})"
+
+
+class ShortLeaveRequest(models.Model):
+   
+    STATUS_CHOICES = (
+        ("Pending", "Pending"),
+        ("Approved", "Approved"),
+        ("Rejected", "Rejected"),
+    )
+
+    employee = models.ForeignKey(User, on_delete=models.CASCADE, related_name="short_leave_requests")
+    date = models.DateField()
+    from_time = models.TimeField()
+    to_time = models.TimeField()
+    reason = models.CharField(max_length=500, blank=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="Pending")
+
+    applied_at = models.DateTimeField(auto_now_add=True)
+    approved_by = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, blank=True, related_name="approved_short_leaves"
+    )
+    approved_at = models.DateTimeField(null=True, blank=True)
+    manager_remark = models.CharField(max_length=500, blank=True)
+
+    class Meta:
+        ordering = ["-applied_at"]
+
+    def __str__(self):
+        return f"{self.employee.full_name} — Short Leave {self.date} ({self.from_time}–{self.to_time})"
+
+    @property
+    def duration_hours(self):
+        from datetime import datetime
+        start = datetime.combine(self.date, self.from_time)
+        end = datetime.combine(self.date, self.to_time)
+        return round((end - start).total_seconds() / 3600, 2)

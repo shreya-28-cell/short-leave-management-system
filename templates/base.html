@@ -55,6 +55,18 @@
             {% endif %}
 
             {% if user.is_admin_role %}
+            <a class="nav-item" href="{% url 'leaves:short_leave_admin_list' %}">
+                <span class="nav-dot nav-dot--live"></span>
+                <span class="nav-label">Short Leave</span>
+            </a>
+            {% else %}
+            <a class="nav-item" href="{% url 'leaves:my_short_leaves' %}">
+                <span class="nav-dot nav-dot--live"></span>
+                <span class="nav-label">Short Leave</span>
+            </a>
+            {% endif %}
+
+            {% if user.is_admin_role %}
             <a class="nav-item" href="{% url 'attendance:admin_list' %}">
                 <span class="nav-dot nav-dot--live"></span>
                 <span class="nav-label">Attendance</span>

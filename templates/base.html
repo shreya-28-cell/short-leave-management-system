@@ -7,144 +7,128 @@
 <title>{% block title %}Short Leave Management System{% endblock %}</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,0..144,500&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link href="{% static 'css/style.css' %}" rel="stylesheet">
 </head>
 <body>
-
 {% if user.is_authenticated %}
 <div class="app-shell">
-    <aside class="sidebar">
-        <div class="brand">
-            <span class="brand-mark">SL</span>
-            <span class="brand-name">Short&nbsp;Leave</span>
-        </div>
-
-        <nav class="nav">
-            <div class="nav-group-label">Workspace</div>
-            <a class="nav-item nav-item--active"
-               href="{% if user.is_admin_role %}{% url 'dashboard:admin_dashboard' %}{% else %}{% url 'dashboard:employee_dashboard' %}{% endif %}">
-                <span class="nav-dot nav-dot--live"></span>
-                <span class="nav-label">Dashboard</span>
-            </a>
-
-            <div class="nav-group-label">Modules</div>
-
-            {% if user.is_admin_role %}
-            <a class="nav-item" href="{% url 'employees:list' %}">
-                <span class="nav-dot nav-dot--live"></span>
-                <span class="nav-label">Employees</span>
-            </a>
-            {% else %}
-            <a class="nav-item" href="{% url 'employees:profile' %}">
-                <span class="nav-dot nav-dot--live"></span>
-                <span class="nav-label">My Profile</span>
-            </a>
-            {% endif %}
-
-            {% if user.is_admin_role %}
-            <a class="nav-item" href="{% url 'leaves:admin_list' %}">
-                <span class="nav-dot nav-dot--live"></span>
-                <span class="nav-label">Leave Requests</span>
-            </a>
-            {% else %}
-            <a class="nav-item" href="{% url 'leaves:my_leaves' %}">
-                <span class="nav-dot nav-dot--live"></span>
-                <span class="nav-label">My Leaves</span>
-            </a>
-            {% endif %}
-
-            {% if user.is_admin_role %}
-            <a class="nav-item" href="{% url 'leaves:short_leave_admin_list' %}">
-                <span class="nav-dot nav-dot--live"></span>
-                <span class="nav-label">Short Leave</span>
-            </a>
-            {% else %}
-            <a class="nav-item" href="{% url 'leaves:my_short_leaves' %}">
-                <span class="nav-dot nav-dot--live"></span>
-                <span class="nav-label">Short Leave</span>
-            </a>
-            {% endif %}
-
-            {% if user.is_admin_role %}
-            <a class="nav-item" href="{% url 'attendance:admin_list' %}">
-                <span class="nav-dot nav-dot--live"></span>
-                <span class="nav-label">Attendance</span>
-            </a>
-            {% else %}
-            <a class="nav-item" href="{% url 'attendance:my_attendance' %}">
-                <span class="nav-dot nav-dot--live"></span>
-                <span class="nav-label">My Attendance</span>
-            </a>
-            {% endif %}
-
-            <a class="nav-item" href="{% url 'attendance:holidays' %}">
-                <span class="nav-dot nav-dot--live"></span>
-                <span class="nav-label">Calendar &amp; Holidays</span>
-            </a>
-
-            <a class="nav-item" href="{% url 'notifications:list' %}">
-                <span class="nav-dot nav-dot--live"></span>
-                <span class="nav-label">Notifications</span>
-            </a>
-
-            {% if user.is_admin_role %}
-            <a class="nav-item" href="{% url 'reports:leave_reports' %}">
-                <span class="nav-dot nav-dot--live"></span>
-                <span class="nav-label">Reports</span>
-            </a>
-            {% endif %}
-        </nav>
-
-        <div class="sidebar-foot">
-            <span class="role-chip role-chip--{{ user.role }}">{{ user.role }}</span>
-        </div>
-    </aside>
-
-    <div class="main">
-        <header class="topbar">
-            <h1 class="page-title">{% block page_title %}Dashboard{% endblock %}</h1>
-            <div class="topbar-user">
-                <a href="{% url 'notifications:list' %}" class="bell-link">
-                    🔔
-                    {% if unread_notifications_count > 0 %}
-                        <span class="bell-badge">{{ unread_notifications_count }}</span>
-                    {% endif %}
-                </a>
-                <div class="user-meta">
-                    <span class="user-name">{{ user.full_name }}</span>
-                    <span class="user-email">{{ user.email }}</span>
-                </div>
-                <form method="POST" action="{% url 'accounts:logout' %}" style="display:inline;">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn--ghost">Log out</button>
-                </form>
-            </div>
-        </header>
-
-        <main class="content">
-            {% if messages %}
-                {% for message in messages %}
-                    <div class="alert alert--{{ message.tags }}">{{ message }}</div>
-                {% endfor %}
-            {% endif %}
-            {% block content %}{% endblock %}
-        </main>
-    </div>
+<aside class="sidebar">
+<div class="brand">
+<span class="brand-mark">SL</span>
+<span class="brand-name">Short&nbsp;Leave</span>
 </div>
-
+<nav class="nav">
+<div class="nav-group-label">Workspace</div>
+<a class="nav-item nav-item--active" href="{% if user.is_admin_role %}{% url 'dashboard:admin_dashboard' %}{% else %}{% url 'dashboard:employee_dashboard' %}{% endif %}">
+<span class="nav-dot nav-dot--live"></span>
+<span class="nav-label">Dashboard</span>
+</a>
+<div class="nav-group-label">Modules</div>
+{% if user.is_admin_role %}
+<a class="nav-item" href="{% url 'employees:list' %}">
+<span class="nav-dot nav-dot--live"></span>
+<span class="nav-label">Employees</span>
+</a>
+{% else %}
+<a class="nav-item" href="{% url 'employees:profile' %}">
+<span class="nav-dot nav-dot--live"></span>
+<span class="nav-label">My Profile</span>
+</a>
+{% endif %}
+{% if user.is_admin_role %}
+<a class="nav-item" href="{% url 'leaves:admin_list' %}">
+<span class="nav-dot nav-dot--live"></span>
+<span class="nav-label">Leave Requests</span>
+</a>
+{% else %}
+<a class="nav-item" href="{% url 'leaves:my_leaves' %}">
+<span class="nav-dot nav-dot--live"></span>
+<span class="nav-label">My Leaves</span>
+</a>
+{% endif %}
+{% if user.is_admin_role %}
+<a class="nav-item" href="{% url 'leaves:short_leave_admin_list' %}">
+<span class="nav-dot nav-dot--live"></span>
+<span class="nav-label">Short Leave</span>
+</a>
+{% else %}
+<a class="nav-item" href="{% url 'leaves:my_short_leaves' %}">
+<span class="nav-dot nav-dot--live"></span>
+<span class="nav-label">Short Leave</span>
+</a>
+{% endif %}
+{% if user.is_admin_role %}
+<a class="nav-item" href="{% url 'attendance:admin_list' %}">
+<span class="nav-dot nav-dot--live"></span>
+<span class="nav-label">Attendance</span>
+</a>
+{% else %}
+<a class="nav-item" href="{% url 'attendance:my_attendance' %}">
+<span class="nav-dot nav-dot--live"></span>
+<span class="nav-label">My Attendance</span>
+</a>
+{% endif %}
+<a class="nav-item" href="{% url 'attendance:holidays' %}">
+<span class="nav-dot nav-dot--live"></span>
+<span class="nav-label">Calendar &amp; Holidays</span>
+</a>
+<a class="nav-item" href="{% url 'notifications:list' %}">
+<span class="nav-dot nav-dot--live"></span>
+<span class="nav-label">Notifications</span>
+</a>
+{% if user.is_admin_role %}
+<a class="nav-item" href="{% url 'reports:leave_reports' %}">
+<span class="nav-dot nav-dot--live"></span>
+<span class="nav-label">Reports</span>
+</a>
+{% endif %}
+</nav>
+<div class="sidebar-foot">
+<span class="role-chip role-chip--{{ user.role }}">{{ user.role }}</span>
+</div>
+</aside>
+<div class="main">
+<header class="topbar">
+<h1 class="page-title">{% block page_title %}Dashboard{% endblock %}</h1>
+<div class="topbar-user">
+<a href="{% url 'notifications:list' %}" class="bell-link">
+🔔
+{% if unread_notifications_count > 0 %}
+<span class="bell-badge">{{ unread_notifications_count }}</span>
+{% endif %}
+</a>
+<div class="user-meta">
+<span class="user-name">{{ user.full_name }}</span>
+<span class="user-email">{{ user.email }}</span>
+</div>
+<form method="POST" action="{% url 'accounts:logout' %}" style="display:inline;">
+{% csrf_token %}
+<button type="submit" class="btn btn--ghost">Log out</button>
+</form>
+</div>
+</header>
+<main class="content">
+{% if messages %}
+{% for message in messages %}
+<div class="alert alert--{{ message.tags }}">{{ message }}</div>
+{% endfor %}
+{% endif %}
+{% block content %}{% endblock %}
+</main>
+</div>
+</div>
 {% else %}
 <div class="auth-wrap">
-    {% if messages %}
-        <div class="auth-messages">
-            {% for message in messages %}
-                <div class="alert alert--{{ message.tags }}">{{ message }}</div>
-            {% endfor %}
-        </div>
-    {% endif %}
-    {% block auth_content %}{% endblock %}
+{% if messages %}
+<div class="auth-messages">
+{% for message in messages %}
+<div class="alert alert--{{ message.tags }}">{{ message }}</div>
+{% endfor %}
 </div>
 {% endif %}
-
+{% block auth_content %}{% endblock %}
+</div>
+{% endif %}
 </body>
 </html>

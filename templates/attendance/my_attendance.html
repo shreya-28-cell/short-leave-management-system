@@ -1,43 +1,45 @@
+
 {% extends "base.html" %}
 {% block title %}My Attendance{% endblock %}
 {% block page_title %}My Attendance{% endblock %}
 
 {% block content %}
 <div class="ledger" style="margin-bottom: 24px;">
-    <h3 class="ledger-title">Today — {{ today_record.date }}</h3>
-    <p class="content-lede">
-        In: {{ today_record.in_time|default:"—" }} &middot;
-        Out: {{ today_record.out_time|default:"—" }} &middot;
-        Hours: {{ today_record.working_hours }}
-    </p>
-    <form method="POST" action="{% url 'attendance:punch_in' %}" style="display:inline;">
-        {% csrf_token %}
-        <button type="submit" class="btn btn--primary" {% if today_record.in_time %}disabled{% endif %}>Punch In</button>
-    </form>
-    <form method="POST" action="{% url 'attendance:punch_out' %}" style="display:inline;">
-        {% csrf_token %}
-        <button type="submit" class="btn btn--ghost" {% if not today_record.in_time or today_record.out_time %}disabled{% endif %}>Punch Out</button>
-    </form>
+<h3 class="ledger-title">Today — {{ today_record.date }}</h3>
+<p class="content-lede">
+In: {{ today_record.in_time|default:"—" }} &middot;
+Out: {{ today_record.out_time|default:"—" }} &middot;
+Hours: {{ today_record.working_hours }}
+</p>
+<form method="POST" action="{% url 'attendance:punch_in' %}" style="display:inline;">
+{% csrf_token %}
+<button type="submit" class="btn btn--primary" {% if today_record.in_time %}disabled{% endif %}>Punch In</button>
+</form>
+<form method="POST" action="{% url 'attendance:punch_out' %}" style="display:inline;">
+{% csrf_token %}
+<button type="submit" class="btn btn--ghost" {% if not today_record.in_time or today_record.out_time %}disabled{% endif %}>Punch Out</button>
+</form>
 </div>
 
 <div class="ledger">
-    <table class="data-table">
-        <thead>
-            <tr><th>Date</th><th>In</th><th>Out</th><th>Hours</th><th>Status</th></tr>
-        </thead>
-        <tbody>
-            {% for r in records %}
-            <tr>
-                <td>{{ r.date }}</td>
-                <td>{{ r.in_time|default:"—" }}</td>
-                <td>{{ r.out_time|default:"—" }}</td>
-                <td>{{ r.working_hours }}</td>
-                <td>{{ r.status }}</td>
-            </tr>
-            {% empty %}
-            <tr><td colspan="5" class="empty-row">No past attendance records yet.</td></tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<table class="data-table">
+<thead>
+<tr><th>Date</th><th>In</th><th>Out</th><th>Hours</th><th>Status</th></tr>
+</thead>
+<tbody>
+{% for r in records %}
+<tr>
+<td>{{ r.date }}</td>
+<td>{{ r.in_time|default:"—" }}</td>
+<td>{{ r.out_time|default:"—" }}</td>
+<td>{{ r.working_hours }}</td>
+<td>{{ r.status }}</td>
+</tr>
+{% empty %}
+<tr><td colspan="5" class="empty-row">No past attendance records yet.</td></tr>
+{% endfor %}
+</tbody>
+</table>
 </div>
 {% endblock %}
+```

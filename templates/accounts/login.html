@@ -3,26 +3,24 @@
 
 {% block auth_content %}
 <div class="auth-card">
-
-    <p class="eyebrow">Short Leave Management System</p>
-    <h2 class="auth-title">Sign in to continue</h2>
-    <p class="auth-sub">Use your registered email. Your role is detected automatically.</p>
-
-    {% if form.errors %}
-        <div class="alert alert--error">That email or password doesn't match our records.</div>
-    {% endif %}
-
-    <form method="POST" class="auth-form">
-        {% csrf_token %}
-        <label class="field">
-            <span class="field-label">Email</span>
-            <input type="email" name="username" required autofocus placeholder="you@company.com">
-        </label>
-        <label class="field">
-            <span class="field-label">Password</span>
-            <input type="password" name="password" required placeholder="••••••••">
-        </label>
-        <button type="submit" class="btn btn--primary btn--block">Sign in</button>
-    </form>
+<p class="eyebrow">Short Leave Management System</p>
+<h2 class="auth-title">Sign in to continue</h2>
+<p class="auth-sub">Use your registered email. Your role is detected automatically.</p>
+{% if form.errors %}
+<div class="alert alert--error">That email or password doesn't match our records.</div>
+{% endif %}
+<form method="POST" class="auth-form">
+{% csrf_token %}
+<label class="field">
+<span class="field-label">Email</span>
+<input type="email" name="username" required autofocus placeholder="you@company.com">
+</label>
+<label class="field">
+<span class="field-label">Password</span>
+<input type="password" name="password" required placeholder="••••••••">
+</label>
+<button type="submit" class="btn btn--primary btn--block">Sign in</button>
+</form>
 </div>
 {% endblock %}
+```

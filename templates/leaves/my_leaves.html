@@ -1,67 +1,69 @@
+```html
 {% extends "base.html" %}
 {% block title %}My Leaves{% endblock %}
 {% block page_title %}My Leaves{% endblock %}
 
 {% block content %}
 <div class="stat-grid">
-    <div class="stat-card">
-        <span class="stat-label">Casual leave</span>
-        <span class="stat-value">{{ balance.remaining_casual }}</span>
-        <span class="stat-note">of {{ balance.casual_leave }} remaining</span>
-    </div>
-    <div class="stat-card">
-        <span class="stat-label">Sick leave</span>
-        <span class="stat-value">{{ balance.remaining_sick }}</span>
-        <span class="stat-note">of {{ balance.sick_leave }} remaining</span>
-    </div>
-    <div class="stat-card">
-        <span class="stat-label">Paid leave</span>
-        <span class="stat-value">{{ balance.remaining_paid }}</span>
-        <span class="stat-note">of {{ balance.paid_leave }} remaining</span>
-    </div>
+<div class="stat-card">
+<span class="stat-label">Casual leave</span>
+<span class="stat-value">{{ balance.remaining_casual }}</span>
+<span class="stat-note">of {{ balance.casual_leave }} remaining</span>
+</div>
+<div class="stat-card">
+<span class="stat-label">Sick leave</span>
+<span class="stat-value">{{ balance.remaining_sick }}</span>
+<span class="stat-note">of {{ balance.sick_leave }} remaining</span>
+</div>
+<div class="stat-card">
+<span class="stat-label">Paid leave</span>
+<span class="stat-value">{{ balance.remaining_paid }}</span>
+<span class="stat-note">of {{ balance.paid_leave }} remaining</span>
+</div>
 </div>
 
 <div class="content-toolbar">
-    <p class="content-lede">Your leave request history.</p>
-    <a href="{% url 'leaves:apply' %}" class="btn btn--primary">Apply for leave</a>
+<p class="content-lede">Your leave request history.</p>
+<a href="{% url 'leaves:apply' %}" class="btn btn--primary">Apply for leave</a>
 </div>
 
 <div class="ledger">
-    <table class="data-table">
-        <thead>
-            <tr>
-                <th>Type</th><th>From</th><th>To</th><th>Days</th><th>Status</th><th>Remark</th><th>Slip</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for lr in leave_requests %}
-            <tr>
-                <td>{{ lr.leave_type }}</td>
-                <td>{{ lr.from_date }}</td>
-                <td>{{ lr.to_date }}</td>
-                <td>{{ lr.total_days }}</td>
-                <td>
-                    {% if lr.status == "Approved" %}
-                        <span class="badge badge--active">Approved</span>
-                    {% elif lr.status == "Rejected" %}
-                        <span class="badge badge--inactive">Rejected</span>
-                    {% else %}
-                        <span class="badge badge--pending">Pending</span>
-                    {% endif %}
-                </td>
-                <td>{{ lr.manager_remark|default:"—" }}</td>
-                <td>
-                    {% if lr.status == "Approved" %}
-                        <a href="{% url 'reports:leave_slip' lr.pk %}" target="_blank" class="btn btn--ghost btn--sm">View</a>
-                    {% else %}
-                        <span class="stat-note">—</span>
-                    {% endif %}
-                </td>
-            </tr>
-            {% empty %}
-            <tr><td colspan="7" class="empty-row">No leave requests yet.</td></tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<table class="data-table">
+<thead>
+<tr>
+<th>Type</th><th>From</th><th>To</th><th>Days</th><th>Status</th><th>Remark</th><th>Slip</th>
+</tr>
+</thead>
+<tbody>
+{% for lr in leave_requests %}
+<tr>
+<td>{{ lr.leave_type }}</td>
+<td>{{ lr.from_date }}</td>
+<td>{{ lr.to_date }}</td>
+<td>{{ lr.total_days }}</td>
+<td>
+{% if lr.status == "Approved" %}
+<span class="badge badge--active">Approved</span>
+{% elif lr.status == "Rejected" %}
+<span class="badge badge--inactive">Rejected</span>
+{% else %}
+<span class="badge badge--pending">Pending</span>
+{% endif %}
+</td>
+<td>{{ lr.manager_remark|default:"—" }}</td>
+<td>
+{% if lr.status == "Approved" %}
+<a href="{% url 'reports:leave_slip' lr.pk %}" target="_blank" class="btn btn--ghost btn--sm">View</a>
+{% else %}
+<span class="stat-note">—</span>
+{% endif %}
+</td>
+</tr>
+{% empty %}
+<tr><td colspan="7" class="empty-row">No leave requests yet.</td></tr>
+{% endfor %}
+</tbody>
+</table>
 </div>
 {% endblock %}
+```

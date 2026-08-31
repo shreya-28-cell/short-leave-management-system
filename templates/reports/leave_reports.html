@@ -4,88 +4,88 @@
 
 {% block content %}
 <div class="form-card" style="max-width: 100%; margin-bottom: 24px;">
-    <form method="GET" style="display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:16px; align-items:end;">
-        <label class="field">
-            <span class="field-label">Employee</span>
-            <select name="employee">
-                <option value="">All</option>
-                {% for emp in employees %}
-                <option value="{{ emp.id }}" {% if query.employee == emp.id|stringformat:"s" %}selected{% endif %}>{{ emp.full_name }}</option>
-                {% endfor %}
-            </select>
-        </label>
-        <label class="field">
-            <span class="field-label">Leave type</span>
-            <select name="leave_type">
-                <option value="">All</option>
-                {% for value, label in leave_types %}
-                <option value="{{ value }}" {% if query.leave_type == value %}selected{% endif %}>{{ label }}</option>
-                {% endfor %}
-            </select>
-        </label>
-        <label class="field">
-            <span class="field-label">Status</span>
-            <select name="status">
-                <option value="">All</option>
-                {% for value, label in statuses %}
-                <option value="{{ value }}" {% if query.status == value %}selected{% endif %}>{{ label }}</option>
-                {% endfor %}
-            </select>
-        </label>
-        <label class="field">
-            <span class="field-label">From date</span>
-            <input type="date" name="from_date" value="{{ query.from_date }}">
-        </label>
-        <label class="field">
-            <span class="field-label">To date</span>
-            <input type="date" name="to_date" value="{{ query.to_date }}">
-        </label>
-        <div style="display:flex; gap:8px;">
-            <button type="submit" class="btn btn--primary">Filter</button>
-            <a href="{% url 'reports:leave_reports' %}" class="btn btn--ghost">Reset</a>
-        </div>
-    </form>
+<form method="GET" style="display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:16px; align-items:end;">
+<label class="field">
+<span class="field-label">Employee</span>
+<select name="employee">
+<option value="">All</option>
+{% for emp in employees %}
+<option value="{{ emp.id }}" {% if query.employee == emp.id|stringformat:"s" %}selected{% endif %}>{{ emp.full_name }}</option>
+{% endfor %}
+</select>
+</label>
+<label class="field">
+<span class="field-label">Leave type</span>
+<select name="leave_type">
+<option value="">All</option>
+{% for value, label in leave_types %}
+<option value="{{ value }}" {% if query.leave_type == value %}selected{% endif %}>{{ label }}</option>
+{% endfor %}
+</select>
+</label>
+<label class="field">
+<span class="field-label">Status</span>
+<select name="status">
+<option value="">All</option>
+{% for value, label in statuses %}
+<option value="{{ value }}" {% if query.status == value %}selected{% endif %}>{{ label }}</option>
+{% endfor %}
+</select>
+</label>
+<label class="field">
+<span class="field-label">From date</span>
+<input type="date" name="from_date" value="{{ query.from_date }}">
+</label>
+<label class="field">
+<span class="field-label">To date</span>
+<input type="date" name="to_date" value="{{ query.to_date }}">
+</label>
+<div style="display:flex; gap:8px;">
+<button type="submit" class="btn btn--primary">Filter</button>
+<a href="{% url 'reports:leave_reports' %}" class="btn btn--ghost">Reset</a>
+</div>
+</form>
 </div>
 
 <div class="content-toolbar">
-    <p class="content-lede">{{ leave_requests|length }} result{{ leave_requests|length|pluralize }}.</p>
-    <a href="{% url 'reports:export_leave_csv' %}?{{ request.GET.urlencode }}" class="btn btn--primary">Export CSV</a>
+<p class="content-lede">{{ leave_requests|length }} result{{ leave_requests|length|pluralize }}.</p>
+<a href="{% url 'reports:export_leave_csv' %}?{{ request.GET.urlencode }}" class="btn btn--primary">Export CSV</a>
 </div>
 
 <div class="ledger">
-    <table class="data-table">
-        <thead>
-            <tr><th>Employee</th><th>Type</th><th>From</th><th>To</th><th>Days</th><th>Status</th><th>Slip</th></tr>
-        </thead>
-        <tbody>
-            {% for lr in leave_requests %}
-            <tr>
-                <td>{{ lr.employee.full_name }}</td>
-                <td>{{ lr.leave_type }}</td>
-                <td>{{ lr.from_date }}</td>
-                <td>{{ lr.to_date }}</td>
-                <td>{{ lr.total_days }}</td>
-                <td>
-                    {% if lr.status == "Approved" %}
-                        <span class="badge badge--active">Approved</span>
-                    {% elif lr.status == "Rejected" %}
-                        <span class="badge badge--inactive">Rejected</span>
-                    {% else %}
-                        <span class="badge badge--pending">Pending</span>
-                    {% endif %}
-                </td>
-                <td>
-                    {% if lr.status == "Approved" %}
-                        <a href="{% url 'reports:leave_slip' lr.pk %}" target="_blank" class="btn btn--ghost btn--sm">View slip</a>
-                    {% else %}
-                        <span class="stat-note">—</span>
-                    {% endif %}
-                </td>
-            </tr>
-            {% empty %}
-            <tr><td colspan="7" class="empty-row">No matching leave records.</td></tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<table class="data-table">
+<thead>
+<tr><th>Employee</th><th>Type</th><th>From</th><th>To</th><th>Days</th><th>Status</th><th>Slip</th></tr>
+</thead>
+<tbody>
+{% for lr in leave_requests %}
+<tr>
+<td>{{ lr.employee.full_name }}</td>
+<td>{{ lr.leave_type }}</td>
+<td>{{ lr.from_date }}</td>
+<td>{{ lr.to_date }}</td>
+<td>{{ lr.total_days }}</td>
+<td>
+{% if lr.status == "Approved" %}
+<span class="badge badge--active">Approved</span>
+{% elif lr.status == "Rejected" %}
+<span class="badge badge--inactive">Rejected</span>
+{% else %}
+<span class="badge badge--pending">Pending</span>
+{% endif %}
+</td>
+<td>
+{% if lr.status == "Approved" %}
+<a href="{% url 'reports:leave_slip' lr.pk %}" target="_blank" class="btn btn--ghost btn--sm">View slip</a>
+{% else %}
+<span class="stat-note">—</span>
+{% endif %}
+</td>
+</tr>
+{% empty %}
+<tr><td colspan="7" class="empty-row">No matching leave records.</td></tr>
+{% endfor %}
+</tbody>
+</table>
 </div>
 {% endblock %}

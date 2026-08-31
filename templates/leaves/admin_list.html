@@ -1,3 +1,4 @@
+```html
 {% extends "base.html" %}
 {% block title %}Leave Requests{% endblock %}
 {% block page_title %}Leave Requests{% endblock %}
@@ -6,48 +7,49 @@
 <p class="content-lede">{{ leave_requests|length }} request{{ leave_requests|length|pluralize }} total. Pending requests are shown first.</p>
 
 <div class="ledger">
-    <table class="data-table">
-        <thead>
-            <tr>
-                <th>Employee</th><th>Type</th><th>From</th><th>To</th><th>Days</th><th>Status</th><th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for lr in leave_requests %}
-            <tr>
-                <td>{{ lr.employee.full_name }}</td>
-                <td>{{ lr.leave_type }}</td>
-                <td>{{ lr.from_date }}</td>
-                <td>{{ lr.to_date }}</td>
-                <td>{{ lr.total_days }}</td>
-                <td>
-                    {% if lr.status == "Approved" %}
-                        <span class="badge badge--active">Approved</span>
-                    {% elif lr.status == "Rejected" %}
-                        <span class="badge badge--inactive">Rejected</span>
-                    {% else %}
-                        <span class="badge badge--pending">Pending</span>
-                    {% endif %}
-                </td>
-                <td>
-                    {% if lr.status == "Pending" %}
-                        <form method="POST" action="{% url 'leaves:approve' lr.pk %}" style="display:inline;">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn--primary btn--sm">Approve</button>
-                        </form>
-                        <form method="POST" action="{% url 'leaves:reject' lr.pk %}" style="display:inline;">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn--ghost btn--sm">Reject</button>
-                        </form>
-                    {% else %}
-                        <span class="stat-note">—</span>
-                    {% endif %}
-                </td>
-            </tr>
-            {% empty %}
-            <tr><td colspan="7" class="empty-row">No leave requests yet.</td></tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<table class="data-table">
+<thead>
+<tr>
+<th>Employee</th><th>Type</th><th>From</th><th>To</th><th>Days</th><th>Status</th><th>Actions</th>
+</tr>
+</thead>
+<tbody>
+{% for lr in leave_requests %}
+<tr>
+<td>{{ lr.employee.full_name }}</td>
+<td>{{ lr.leave_type }}</td>
+<td>{{ lr.from_date }}</td>
+<td>{{ lr.to_date }}</td>
+<td>{{ lr.total_days }}</td>
+<td>
+{% if lr.status == "Approved" %}
+<span class="badge badge--active">Approved</span>
+{% elif lr.status == "Rejected" %}
+<span class="badge badge--inactive">Rejected</span>
+{% else %}
+<span class="badge badge--pending">Pending</span>
+{% endif %}
+</td>
+<td>
+{% if lr.status == "Pending" %}
+<form method="POST" action="{% url 'leaves:approve' lr.pk %}" style="display:inline;">
+{% csrf_token %}
+<button type="submit" class="btn btn--primary btn--sm">Approve</button>
+</form>
+<form method="POST" action="{% url 'leaves:reject' lr.pk %}" style="display:inline;">
+{% csrf_token %}
+<button type="submit" class="btn btn--ghost btn--sm">Reject</button>
+</form>
+{% else %}
+<span class="stat-note">—</span>
+{% endif %}
+</td>
+</tr>
+{% empty %}
+<tr><td colspan="7" class="empty-row">No leave requests yet.</td></tr>
+{% endfor %}
+</tbody>
+</table>
 </div>
 {% endblock %}
+```

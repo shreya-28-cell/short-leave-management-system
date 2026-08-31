@@ -4,15 +4,15 @@
 
 {% block content %}
 <div class="ledger">
-    <h3 class="ledger-title">Account details</h3>
-    <ul class="ledger-list">
-        <li class="ledger-item">Full name: {{ profile_user.full_name }}</li>
-        <li class="ledger-item">Email: {{ profile_user.email }}</li>
-        <li class="ledger-item">Employee code: {{ profile_user.employee_code|default:"Not set yet" }}</li>
-        <li class="ledger-item">Department: {{ profile_user.department|default:"Not set yet" }}</li>
-        <li class="ledger-item">Designation: {{ profile_user.designation|default:"Not set yet" }}</li>
-        <li class="ledger-item">Mobile: {{ profile_user.mobile|default:"Not set yet" }}</li>
-    </ul>
+<h3 class="ledger-title">Account details</h3>
+<ul class="ledger-list">
+<li class="ledger-item">Full name: {{ profile_user.full_name }}</li>
+<li class="ledger-item">Email: {{ profile_user.email }}</li>
+<li class="ledger-item">Employee code: {{ profile_user.employee_code|default:"Not set yet" }}</li>
+<li class="ledger-item">Department: {{ profile_user.department|default:"Not set yet" }}</li>
+<li class="ledger-item">Designation: {{ profile_user.designation|default:"Not set yet" }}</li>
+<li class="ledger-item">Mobile: {{ profile_user.mobile|default:"Not set yet" }}</li>
+</ul>
 </div>
 <p class="content-lede" style="margin-top:16px;">
     Only admin can edit your profile details. 

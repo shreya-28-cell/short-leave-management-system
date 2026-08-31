@@ -1,4 +1,4 @@
-```html
+
 {% extends "base.html" %}
 {% block title %}My Leaves{% endblock %}
 {% block page_title %}My Leaves{% endblock %}
@@ -53,8 +53,7 @@
 <td>{{ lr.manager_remark|default:"—" }}</td>
 <td>
 {% if lr.status == "Approved" %}
-<a href="{% url 'reports:leave_slip' lr.pk %}" target="_blank" class="btn btn--ghost btn--sm">View</a>
-{% else %}
+<a href="{% url 'reports:leave_slip' lr.pk %}" class="btn btn--ghost btn--sm">View</a>{% else %}
 <span class="stat-note">—</span>
 {% endif %}
 </td>

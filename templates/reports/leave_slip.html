@@ -4,67 +4,71 @@
 <meta charset="UTF-8">
 <title>Leave Slip — {{ leave.employee.full_name }}</title>
 <style>
-body {
-    font-family: Georgia, serif;
-    max-width: 650px;
-    margin: 40px auto;
-    color: #16213A;
-}
-h1 {
-    font-size: 1.4rem;
-    border-bottom: 2px solid #16213A;
-    padding-bottom: 10px;
-}
-.row {
-    display: flex;
-    justify-content: space-between;
-    padding: 8px 0;
-    border-bottom: 1px dashed #ccc;
-}
-.label { font-weight: bold; }
-.stamp {
-    display: inline-block;
-    border: 2px dashed #C08A2E;
-    color: #C08A2E;
-    padding: 10px 20px;
-    border-radius: 50%;
-    transform: rotate(-8deg);
-    margin-top: 20px;
-    font-family: monospace;
-    text-transform: uppercase;
-    font-size: 0.8rem;
-}
-.no-print { margin-top: 24px; }
-.no-print button {
-    font-family: Georgia, serif;
-    font-size: 0.95rem;
-    padding: 10px 20px;
-    border-radius: 8px;
-    border: 1px solid #16213A;
-    background: #16213A;
-    color: #fff;
-    cursor: pointer;
-}
-@media print {
-    .no-print { display: none; }
-}
+    body {
+        font-family: Georgia, serif;
+        max-width: 650px;
+        margin: 40px auto;
+        color: #16213A;
+    }
+    h1 {
+        font-size: 1.4rem;
+        border-bottom: 2px solid #16213A;
+        padding-bottom: 10px;
+    }
+    .row {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        border-bottom: 1px dashed #ccc;
+    }
+    .label { font-weight: bold; }
+    .stamp {
+        display: inline-block;
+        border: 2px dashed #C08A2E;
+        color: #C08A2E;
+        padding: 10px 20px;
+        border-radius: 50%;
+        transform: rotate(-8deg);
+        margin-top: 20px;
+        font-family: monospace;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+    }
+    .no-print { margin-top: 24px; display: flex; gap: 10px; }
+    .no-print button {
+        font-family: Georgia, serif;
+        font-size: 0.95rem;
+        padding: 10px 20px;
+        border-radius: 8px;
+        border: 1px solid #16213A;
+        cursor: pointer;
+    }
+    .btn-primary { background: #16213A; color: #fff; }
+    .btn-secondary { background: #fff; color: #16213A; }
+    @media print {
+        .no-print { display: none; }
+    }
 </style>
 </head>
 <body>
-<h1>Short Leave Management System — Leave Slip</h1>
-<div class="row"><span class="label">Employee</span><span>{{ leave.employee.full_name }}</span></div>
-<div class="row"><span class="label">Employee code</span><span>{{ leave.employee.employee_code|default:"—" }}</span></div>
-<div class="row"><span class="label">Department</span><span>{{ leave.employee.department|default:"—" }}</span></div>
-<div class="row"><span class="label">Leave type</span><span>{{ leave.leave_type }}</span></div>
-<div class="row"><span class="label">From</span><span>{{ leave.from_date }}</span></div>
-<div class="row"><span class="label">To</span><span>{{ leave.to_date }}</span></div>
-<div class="row"><span class="label">Total days</span><span>{{ leave.total_days }}</span></div>
-<div class="row"><span class="label">Reason</span><span>{{ leave.reason|default:"—" }}</span></div>
-<div class="row"><span class="label">Approved by</span><span>{{ leave.approved_by.full_name|default:"—" }}</span></div>
-<div class="row"><span class="label">Approved on</span><span>{{ leave.approved_at|date:"d M Y, H:i"|default:"—" }}</span></div>
-<div class="stamp">Approved</div>
-<div class="no-print">
-<button onclick="window.print()">Print / Save as PDF</button>
-</div>
+    <h1>Short Leave Management System — Leave Slip</h1>
+
+    <div class="row"><span class="label">Employee</span><span>{{ leave.employee.full_name }}</span></div>
+    <div class="row"><span class="label">Employee code</span><span>{{ leave.employee.employee_code|default:"—" }}</span></div>
+    <div class="row"><span class="label">Department</span><span>{{ leave.employee.department|default:"—" }}</span></div>
+    <div class="row"><span class="label">Leave type</span><span>{{ leave.leave_type }}</span></div>
+    <div class="row"><span class="label">From</span><span>{{ leave.from_date }}</span></div>
+    <div class="row"><span class="label">To</span><span>{{ leave.to_date }}</span></div>
+    <div class="row"><span class="label">Total days</span><span>{{ leave.total_days }}</span></div>
+    <div class="row"><span class="label">Reason</span><span>{{ leave.reason|default:"—" }}</span></div>
+    <div class="row"><span class="label">Approved by</span><span>{{ leave.approved_by.full_name|default:"—" }}</span></div>
+    <div class="row"><span class="label">Approved on</span><span>{{ leave.approved_at|date:"d M Y, H:i"|default:"—" }}</span></div>
+
+    <div class="stamp">Approved</div>
+
+    <div class="no-print">
+        <button class="btn-secondary" onclick="window.close(); history.back();">Back</button>
+        <button class="btn-primary" onclick="window.print()">Print / Save as PDF</button>
+    </div>
 </body>
 </html>

@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}Leave History{% endblock %}
+{% block page_title %}Leave History{% endblock %}
+
+{% block content %}
+<div class="stat-grid">
+    <div class="stat-card">
+        <span class="stat-label">Casual leave</span>
+        <span class="stat-value">{{ balance.remaining_casual }}</span>
+        <span class="stat-note">of {{ balance.casual_leave }} remaining</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-label">Sick leave</span>
+        <span class="stat-value">{{ balance.remaining_sick }}</span>
+        <span class="stat-note">of {{ balance.sick_leave }} remaining</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-label">Paid leave</span>
+        <span class="stat-value">{{ balance.remaining_paid }}</span>
+        <span class="stat-note">of {{ balance.paid_leave }} remaining</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-label">Short leave</span>
+        <span class="stat-value">{{ short_leave_remaining }}</span>
+        <span class="stat-note">remaining this month</span>
+    </div>
+</div>
+
+<p class="content-lede">All your requests — full-day leave and short leave — together.</p>
+
+<div class="ledger">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Kind</th><th>Type</th><th>From</th><th>To</th><th>Duration</th><th>Status</th><th>Remark</th><th>Slip</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in combined %}
+            <tr>
+                <td>{{ item.kind }}</td>
+                <td>{{ item.type_label }}</td>
+                <td>{{ item.from_display }}</td>
+                <td>{{ item.to_display }}</td>
+                <td>{{ item.amount }}</td>
+                <td>
+                    {% if item.status == "Approved" %}
+                        <span class="badge badge--active">Approved</span>
+                    {% elif item.status == "Rejected" %}
+                        <span class="badge badge--inactive">Rejected</span>
+                    {% else %}
+                        <span class="badge badge--pending">Pending</span>
+                    {% endif %}
+                </td>
+                <td>{{ item.remark|default:"—" }}</td>
+                <td>
+                    {% if item.status == "Approved" %}
+                        <a href="{% url item.slip_url_name item.pk %}" class="btn btn--ghost btn--sm">View</a>
+                    {% else %}
+                        <span class="stat-note">—</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="8" class="empty-row">No leave requests yet.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

@@ -6,39 +6,43 @@
 <p class="content-lede">Welcome, {{ user.full_name }}.</p>
 
 <div class="stat-grid">
-<div class="stat-card">
-<span class="stat-label">Casual leave</span>
-<span class="stat-value">{{ balance.remaining_casual }}</span>
-<span class="stat-note">of {{ balance.casual_leave }} remaining</span>
-</div>
-<div class="stat-card">
-<span class="stat-label">Sick leave</span>
-<span class="stat-value">{{ balance.remaining_sick }}</span>
-<span class="stat-note">of {{ balance.sick_leave }} remaining</span>
-</div>
-<div class="stat-card">
-<span class="stat-label">Today's attendance</span>
-<span class="stat-value">
-{% if today_record.out_time %}Done
-{% elif today_record.in_time %}In progress
-{% else %}Not marked{% endif %}
-</span>
-<span class="stat-note"><a href="{% url 'attendance:my_attendance' %}">Punch in / out</a></span>
-</div>
+    <div class="stat-card">
+        <span class="stat-label">Casual leave</span>
+        <span class="stat-value">{{ balance.remaining_casual }}</span>
+        <span class="stat-note">of {{ balance.casual_leave }} remaining</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-label">Sick leave</span>
+        <span class="stat-value">{{ balance.remaining_sick }}</span>
+        <span class="stat-note">of {{ balance.sick_leave }} remaining</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-label">Short leave</span>
+        <span class="stat-value">{{ short_leave_remaining }}</span>
+        <span class="stat-note">of 02.0  remaining</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-label">Today's attendance</span>
+        <span class="stat-value">
+            {% if today_record.out_time %}Done
+            {% elif today_record.in_time %}In progress
+            {% else %}Not marked{% endif %}
+        </span>
+        <span class="stat-note"><a href="{% url 'attendance:my_attendance' %}">Punch in / out</a></span>
+    </div>
 </div>
 
 <div class="ledger">
-<h3 class="ledger-title">Your profile</h3>
-<ul class="ledger-list">
-<li class="ledger-item">Department: {{ user.department|default:"Not set yet" }}</li>
-<li class="ledger-item">Designation: {{ user.designation|default:"Not set yet" }}</li>
-<li class="ledger-item">Employee code: {{ user.employee_code|default:"Not set yet" }}</li>
-</ul>
+    <h3 class="ledger-title">Your profile</h3>
+    <ul class="ledger-list">
+        <li class="ledger-item">Department: {{ user.department|default:"Not set yet" }}</li>
+        <li class="ledger-item">Designation: {{ user.designation|default:"Not set yet" }}</li>
+        <li class="ledger-item">Employee code: {{ user.employee_code|default:"Not set yet" }}</li>
+    </ul>
 </div>
 
 <p class="content-lede" style="margin-top: 16px;">
-<a href="{% url 'leaves:apply' %}" class="btn btn--primary">Apply for leave</a>
-<a href="{% url 'leaves:my_leaves' %}" class="btn btn--ghost" style="margin-left: 8px;">View my leave history</a>
+    <a href="{% url 'leaves:apply' %}" class="btn btn--primary">Apply for leave</a>
+    <a href="{% url 'leaves:apply_short_leave' %}" class="btn btn--primary" style="margin-left: 8px;">Apply for short leave</a>
 </p>
 {% endblock %}
-```

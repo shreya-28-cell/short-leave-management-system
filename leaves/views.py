@@ -21,6 +21,8 @@ def is_employee(user):
     return user.is_authenticated and user.is_employee_role()
 
 
+# ---------- Full-day leave: employee views ----------
+
 @login_required
 @user_passes_test(is_employee, login_url="accounts:login")
 def apply_leave(request):
@@ -57,20 +59,153 @@ def my_leaves(request):
 
 
 @login_required
+@user_passes_test(is_employee, login_url="accounts:login")
+def my_leave_history(request):
+    """Combined view: full-day leaves AND short leaves together, sorted by when applied."""
+    balance, _ = LeaveBalance.objects.get_or_create(user=request.user)
+
+    today = timezone.localdate()
+    used_short_leaves_this_month = ShortLeaveRequest.objects.filter(
+        employee=request.user,
+        date__year=today.year,
+        date__month=today.month,
+    ).exclude(status="Rejected").count()
+    short_leave_remaining = max(MAX_SHORT_LEAVES_PER_MONTH - used_short_leaves_this_month, 0)
+
+    combined = []
+    for lr in request.user.leave_requests.all():
+        combined.append({
+            "kind": "Full Leave",
+            "type_label": lr.leave_type,
+            "from_display": lr.from_date,
+            "to_display": lr.to_date,
+            "amount": f"{lr.total_days} day(s)",
+            "status": lr.status,
+            "remark": lr.manager_remark,
+            "applied_at": lr.applied_at,
+            "slip_url_name": "reports:leave_slip",
+            "pk": lr.pk,
+        })
+    for sl in request.user.short_leave_requests.all():
+        combined.append({
+            "kind": "Short Leave",
+            "type_label": "Short Leave",
+            "from_display": sl.date,
+            "to_display": f"{sl.from_time.strftime('%I:%M %p')} – {sl.to_time.strftime('%I:%M %p')}",
+            "amount": f"{sl.duration_hours} hr(s)",
+            "status": sl.status,
+            "remark": sl.manager_remark,
+            "applied_at": sl.applied_at,
+            "slip_url_name": "reports:short_leave_slip",
+            "pk": sl.pk,
+        })
+
+    combined.sort(key=lambda x: x["applied_at"], reverse=True)
+
+    return render(request, "leaves/history.html", {
+        "combined": combined,
+        "balance": balance,
+        "short_leave_remaining": short_leave_remaining,
+    })
+
+
+# ---------- Full-day + short leave: combined admin views ----------
+
+@login_required
 @user_passes_test(is_admin, login_url="accounts:login")
 def leave_requests_admin(request):
-    leave_requests = (
-        LeaveRequest.objects.select_related("employee")
-        .annotate(
-            priority=Case(
-                When(status="Pending", then=Value(0)),
-                default=Value(1),
-                output_field=IntegerField(),
-            )
-        )
-        .order_by("priority", "-applied_at")
-    )
-    return render(request, "leaves/admin_list.html", {"leave_requests": leave_requests})
+    combined = []
+    for lr in LeaveRequest.objects.select_related("employee").all():
+        combined.append({
+            "employee": lr.employee.full_name,
+            "employee_id": lr.employee_id,
+            "kind": "Full Leave",
+            "type_label": lr.leave_type,
+            "from_display": lr.from_date,
+            "to_display": lr.to_date,
+            "amount": f"{lr.total_days} day(s)",
+            "status": lr.status,
+            "applied_at": lr.applied_at,
+            "approve_url_name": "leaves:approve",
+            "reject_url_name": "leaves:reject",
+            "pk": lr.pk,
+        })
+    for sl in ShortLeaveRequest.objects.select_related("employee").all():
+        combined.append({
+            "employee": sl.employee.full_name,
+            "employee_id": sl.employee_id,
+            "kind": "Short Leave",
+            "type_label": "Short Leave",
+            "from_display": sl.date,
+            "to_display": f"{sl.from_time.strftime('%I:%M %p')} – {sl.to_time.strftime('%I:%M %p')}",
+            "amount": f"{sl.duration_hours} hr(s)",
+            "status": sl.status,
+            "applied_at": sl.applied_at,
+            "approve_url_name": "leaves:approve_short_leave",
+            "reject_url_name": "leaves:reject_short_leave",
+            "pk": sl.pk,
+        })
+
+    combined.sort(key=lambda x: (x["status"] != "Pending", -x["applied_at"].timestamp()))
+
+    return render(request, "leaves/admin_list.html", {"combined": combined})
+
+
+@login_required
+@user_passes_test(is_admin, login_url="accounts:login")
+def employee_leave_history(request, pk):
+    employee = get_object_or_404(User, pk=pk, role="employee")
+    balance, _ = LeaveBalance.objects.get_or_create(user=employee)
+
+    today = timezone.localdate()
+    used_short_leaves_this_month = ShortLeaveRequest.objects.filter(
+        employee=employee,
+        date__year=today.year,
+        date__month=today.month,
+    ).exclude(status="Rejected").count()
+    short_leave_remaining = max(MAX_SHORT_LEAVES_PER_MONTH - used_short_leaves_this_month, 0)
+
+    combined = []
+    for lr in employee.leave_requests.all():
+        combined.append({
+            "kind": "Full Leave",
+            "type_label": lr.leave_type,
+            "from_display": lr.from_date,
+            "to_display": lr.to_date,
+            "amount": f"{lr.total_days} day(s)",
+            "status": lr.status,
+            "remark": lr.manager_remark,
+            "applied_at": lr.applied_at,
+            "slip_url_name": "reports:leave_slip",
+            "pk": lr.pk,
+        })
+    for sl in employee.short_leave_requests.all():
+        combined.append({
+            "kind": "Short Leave",
+            "type_label": "Short Leave",
+            "from_display": sl.date,
+            "to_display": f"{sl.from_time.strftime('%I:%M %p')} – {sl.to_time.strftime('%I:%M %p')}",
+            "amount": f"{sl.duration_hours} hr(s)",
+            "status": sl.status,
+            "remark": sl.manager_remark,
+            "applied_at": sl.applied_at,
+            "slip_url_name": "reports:short_leave_slip",
+            "pk": sl.pk,
+        })
+
+    combined.sort(key=lambda x: x["applied_at"], reverse=True)
+
+    approved_full_count = sum(1 for c in combined if c["kind"] == "Full Leave" and c["status"] == "Approved")
+    approved_short_count = sum(1 for c in combined if c["kind"] == "Short Leave" and c["status"] == "Approved")
+
+    return render(request, "leaves/employee_history.html", {
+        "employee": employee,
+        "combined": combined,
+        "balance": balance,
+        "short_leave_remaining": short_leave_remaining,
+        "approved_full_count": approved_full_count,
+        "approved_short_count": approved_short_count,
+    })
 
 
 def _remaining_for(balance, leave_type):
@@ -155,6 +290,8 @@ def reject_leave(request, pk):
     return redirect("leaves:admin_list")
 
 
+# ---------- Short leave: employee views ----------
+
 @login_required
 @user_passes_test(is_employee, login_url="accounts:login")
 def apply_short_leave(request):
@@ -209,6 +346,8 @@ def my_short_leaves(request):
         "remaining": remaining,
     })
 
+
+# ---------- Short leave: admin views ----------
 
 @login_required
 @user_passes_test(is_admin, login_url="accounts:login")

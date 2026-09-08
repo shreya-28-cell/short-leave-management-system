@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.shortcuts import render, redirect
+from django.views.decorators.http import require_POST
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.utils import timezone
 from datetime import datetime
@@ -14,6 +15,8 @@ def is_admin(user):
 def is_employee(user):
     return user.is_authenticated and user.is_employee_role()
 
+
+# ---------- Employee views ----------
 
 @login_required
 @user_passes_test(is_employee, login_url="accounts:login")
@@ -62,12 +65,16 @@ def punch_out(request):
     return redirect("attendance:my_attendance")
 
 
+# ---------- Admin views ----------
+
 @login_required
 @user_passes_test(is_admin, login_url="accounts:login")
 def attendance_admin_list(request):
     records = Attendance.objects.select_related("employee").order_by("-date")[:200]
     return render(request, "attendance/admin_list.html", {"records": records})
 
+
+# ---------- Shared (both roles can view, only admin can add/delete) ----------
 
 @login_required
 def holiday_list(request):
@@ -84,3 +91,14 @@ def holiday_list(request):
 
     holidays = Holiday.objects.all()
     return render(request, "attendance/holidays.html", {"holidays": holidays})
+
+
+@login_required
+@user_passes_test(is_admin, login_url="accounts:login")
+@require_POST
+def delete_holiday(request, pk):
+    holiday = get_object_or_404(Holiday, pk=pk)
+    name = holiday.name
+    holiday.delete()
+    messages.success(request, f"'{name}' was removed from the calendar.")
+    return redirect("attendance:holidays")

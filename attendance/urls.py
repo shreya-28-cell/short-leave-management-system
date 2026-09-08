@@ -9,4 +9,5 @@ urlpatterns = [
     path("punch-out/", views.punch_out, name="punch_out"),
     path("records/", views.attendance_admin_list, name="admin_list"),
     path("holidays/", views.holiday_list, name="holidays"),
+    path("holidays/<int:pk>/delete/", views.delete_holiday, name="delete_holiday"),
 ]

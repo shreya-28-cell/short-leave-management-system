@@ -1,41 +1,56 @@
-
 {% extends "base.html" %}
 {% block title %}My Short Leaves{% endblock %}
 {% block page_title %}My Short Leaves{% endblock %}
 
 {% block content %}
+<div class="stat-grid">
+    <div class="stat-card">
+        <span class="stat-label">Short leave</span>
+        <span class="stat-value">{{ remaining }}</span>
+        <span class="stat-note">remaining this month</span>
+    </div>
+</div>
+
 <div class="content-toolbar">
-<p class="content-lede">{{ remaining }} short leave{{ remaining|pluralize }} remaining this month.</p>
-<a href="{% url 'leaves:apply_short_leave' %}" class="btn btn--primary">Apply for short leave</a>
+    <p class="content-lede">Your short leave request history.</p>
+    <a href="{% url 'leaves:apply_short_leave' %}" class="btn btn--primary">Apply for short leave</a>
 </div>
 
 <div class="ledger">
-<table class="data-table">
-<thead>
-<tr><th>Date</th><th>From</th><th>To</th><th>Status</th><th>Remark</th></tr>
-</thead>
-<tbody>
-{% for sl in short_leaves %}
-<tr>
-<td>{{ sl.date }}</td>
-<td>{{ sl.from_time }}</td>
-<td>{{ sl.to_time }}</td>
-<td>
-{% if sl.status == "Approved" %}
-<span class="badge badge--active">Approved</span>
-{% elif sl.status == "Rejected" %}
-<span class="badge badge--inactive">Rejected</span>
-{% else %}
-<span class="badge badge--pending">Pending</span>
-{% endif %}
-</td>
-<td>{{ sl.manager_remark|default:"—" }}</td>
-</tr>
-{% empty %}
-<tr><td colspan="5" class="empty-row">No short leave requests yet.</td></tr>
-{% endfor %}
-</tbody>
-</table>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Date</th><th>From</th><th>To</th><th>Status</th><th>Remark</th><th>Slip</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for sl in short_leaves %}
+            <tr>
+                <td>{{ sl.date }}</td>
+                <td>{{ sl.from_time }}</td>
+                <td>{{ sl.to_time }}</td>
+                <td>
+                    {% if sl.status == "Approved" %}
+                        <span class="badge badge--active">Approved</span>
+                    {% elif sl.status == "Rejected" %}
+                        <span class="badge badge--inactive">Rejected</span>
+                    {% else %}
+                        <span class="badge badge--pending">Pending</span>
+                    {% endif %}
+                </td>
+                <td>{{ sl.manager_remark|default:"—" }}</td>
+                <td>
+                    {% if sl.status == "Approved" %}
+                        <a href="{% url 'reports:short_leave_slip' sl.pk %}" class="btn btn--ghost btn--sm">View</a>
+                    {% else %}
+                        <span class="stat-note">—</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="6" class="empty-row">No short leave requests yet.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
 {% endblock %}
-```
